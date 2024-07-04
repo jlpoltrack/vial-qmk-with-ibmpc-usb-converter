@@ -4,3 +4,9 @@ LTO_ENABLE = yes
 NKRO_ENABLE = no
 MOUSEKEY_ENABLE = no
 QMK_SETTINGS = no
+
+
+# Options to save space:
+TAP_DANCE_ENABLE = no
+COMBO_ENABLE = no
+KEY_OVERRIDE_ENABLE = no
