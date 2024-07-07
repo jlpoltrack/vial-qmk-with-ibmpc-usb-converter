@@ -3,7 +3,7 @@ VIAL_ENABLE = yes
 LTO_ENABLE = yes
 NKRO_ENABLE = no
 MOUSEKEY_ENABLE = no
-QMK_SETTINGS = no
+QMK_SETTINGS = yes
 
 
 # Options to save space:

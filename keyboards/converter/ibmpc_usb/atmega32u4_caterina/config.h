@@ -86,3 +86,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     IBMPC_RST_PORT &= ~(1<<IBMPC_RST_BIT1);  \
     IBMPC_RST_DDR  |=  (1<<IBMPC_RST_BIT1);  \
 } while (0)
+
+// Comment out HAPTIC_ENABLE_PIN if you don't have an enable pin:
+#define HAPTIC_ENABLE_PIN B4
+// We disable haptic feedbeck during USB low power conditions:
+#define HAPTIC_OFF_IN_LOW_POWER 1
+// Change this if you are using a different pin for the solenoid:
+#define SOLENOID_PIN B5
+// If you are not using a solenoid then comment out the above, and also in rules.mk, remove "HAPTIC_ENABLE += SOLENOID"
+// You can also tune the following for your solenoid:
+#define SOLENOID_DEFAULT_DWELL 4
+#define SOLENOID_MIN_DWELL 4
+#define NO_HAPTIC_MOD

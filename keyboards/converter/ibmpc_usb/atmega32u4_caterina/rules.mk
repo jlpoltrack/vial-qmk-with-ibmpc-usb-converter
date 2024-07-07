@@ -22,6 +22,9 @@ BLUETOOTH_ENABLE = no       # Enable Bluetooth
 AUDIO_ENABLE = no           # Audio output
 CUSTOM_MATRIX = yes
 
+HAPTIC_ENABLE = yes
+HAPTIC_DRIVER = solenoid
+
 SRC += matrix.c ibmpc.c
 
 # EEPROM_DRIVER = i2c
