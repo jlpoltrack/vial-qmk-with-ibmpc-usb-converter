@@ -23,7 +23,7 @@ AUDIO_ENABLE = no           # Audio output
 CUSTOM_MATRIX = yes
 
 HAPTIC_ENABLE = yes
-HAPTIC_DRIVER = solenoid
+HAPTIC_DRIVER = SOLENOID
 
 SRC += matrix.c ibmpc.c
 
