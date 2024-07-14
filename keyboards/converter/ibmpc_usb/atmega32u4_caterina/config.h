@@ -86,3 +86,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     IBMPC_RST_PORT &= ~(1<<IBMPC_RST_BIT1);  \
     IBMPC_RST_DDR  |=  (1<<IBMPC_RST_BIT1);  \
 } while (0)
+
+// Haptic enable pin:
+#define HAPTIC_ENABLE_PIN B4
+// Disable haptic feedbeck during USB low power conditions:
+#define HAPTIC_OFF_IN_LOW_POWER 1
+// Solenoid active pin:
+#define SOLENOID_PIN B5
+// Solenoid dwell times, Model F Labs reco is 20 ms:
+#define SOLENOID_DEFAULT_DWELL 10
+#define SOLENOID_MIN_DWELL 10
+#define SOLENOID_MAX_DWELL 50
+#define SOLENOID_DWELL_STEP_SIZE 5
+// No haptic on modifier keys
+#define NO_HAPTIC_MOD
