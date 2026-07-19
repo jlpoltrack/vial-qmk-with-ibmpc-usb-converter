@@ -1,5 +1,5 @@
 /*
-    ChibiOS - Copyright (C) 2006..2020 Giovanni Di Sirio
+    ChibiOS - Copyright (C) 2006-2026 Giovanni Di Sirio.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
 #define CHCONF_H
 
 #define _CHIBIOS_RT_CONF_
-#define _CHIBIOS_RT_CONF_VER_7_0_
+#define _CHIBIOS_RT_CONF_VER_8_0_
 
 /*===========================================================================*/
 /**
@@ -52,11 +52,10 @@
 /**
  * @brief   Kernel hardening level.
  * @details This option is the level of functional-safety checks enabled
- *          in the kerkel. The meaning is:
+ *          in the kernel. The meaning is:
  *          - 0: No checks, maximum performance.
  *          - 1: Reasonable checks.
  *          - 2: All checks.
- *          .
  */
 #if !defined(CH_CFG_HARDENING_LEVEL)
 #define CH_CFG_HARDENING_LEVEL              0
@@ -374,8 +373,9 @@
 #endif
 
 /**
- * @brief   Memory checks APIs.
- * @details If enabled then the memory checks APIs are included in the kernel.
+ * @brief   Core Memory Manager APIs.
+ * @details If enabled then the core memory manager APIs are included
+ *          in the kernel.
  *
  * @note    The default is @p TRUE.
  */
@@ -383,13 +383,6 @@
 #define CH_CFG_USE_MEMCHECKS                TRUE
 #endif
 
-/**
- * @brief   Core Memory Manager APIs.
- * @details If enabled then the core memory manager APIs are included
- *          in the kernel.
- *
- * @note    The default is @p TRUE.
- */
 #if !defined(CH_CFG_USE_MEMCORE)
 #define CH_CFG_USE_MEMCORE                  TRUE
 #endif
@@ -828,6 +821,18 @@
 #define CH_CFG_RUNTIME_FAULTS_HOOK(mask) {                                  \
   /* Faults handling code here.*/                                           \
 }
+
+/**
+ * @brief   Safety check failure hook.
+ * @details This hook is invoked when one of the kernel's functional-safety
+ *          checks fails.
+ */
+#if !defined(CH_CFG_SAFETY_CHECK_HOOK)
+#define CH_CFG_SAFETY_CHECK_HOOK(l, f) do {                                 \
+  /* Safety handling code here.*/                                           \
+  chSysHalt(f);                                                             \
+} while (false)
+#endif
 
 /** @} */
 
