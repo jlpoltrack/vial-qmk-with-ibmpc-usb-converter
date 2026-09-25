@@ -21,6 +21,13 @@ Scroll Lock| PC10
 LEDs are active high (3.3V); wire each through a resistor to GND. The M122
 itself has no LEDs.
 
+Solenoid   | Pin
+:--------- | :--
+Solenoid   | PB13 (active high, drive through a MOSFET with a flyback diode)
+Enable     | PB12 (high while haptics are on; optional)
+
+Toggle and tune it with the `HF_TOGG`, `HF_DWLU`/`HF_DWLD` keycodes.
+
 PB6 is a GPIO held low (max ~20mA), so it can only serve as a signal/shield
 ground. The keyboard's supply ground must go to a real GND pin (P1 pin 1).
 

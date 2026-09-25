@@ -6,5 +6,11 @@
         "num_lock": "C11",
         "scroll_lock": "C10",
         "on_state": 1
+    },
+    "features": {
+        "haptic": true
+    },
+    "haptic": {
+        "driver": "solenoid"
     }
 }

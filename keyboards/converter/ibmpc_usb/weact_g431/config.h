@@ -23,3 +23,11 @@
 #define DYNAMIC_KEYMAP_MACRO_EEPROM_SIZE 4096
 #define WEAR_LEVELING_LOGICAL_SIZE 8192
 #define WEAR_LEVELING_BACKING_SIZE 16384
+
+/* Solenoid (haptic). PB12/PB13 have no pull-ups at reset, so no misfire while booting. */
+#define SOLENOID_PIN              B13
+#define HAPTIC_ENABLE_PIN         B12   // driver/boost enable; remove if unused
+#define HAPTIC_OFF_IN_LOW_POWER   1
+#define SOLENOID_DEFAULT_DWELL    4
+#define SOLENOID_MIN_DWELL        4
+#define NO_HAPTIC_MOD
