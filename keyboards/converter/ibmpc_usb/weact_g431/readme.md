@@ -4,17 +4,19 @@
 
 ## Wiring
 
-Keyboard | G431 pin
-:------- | :-------
-Clock    | PB7
-Data     | PB9
-Reset 0  | PB5 (XT Type-1 only)
-Reset 1  | PA8 (XT Type-1 only)
-VCC      | 5V
-GND      | GND
+Keyboard     | G431 pin (header P1)
+:----------- | :-------------------
+Clock        | PB7
+Signal GND   | PB6 (GPIO driven low)
+Data         | PB5
+VCC          | 5V
+GND          | GND
 
-PB7/PB9 are 5V tolerant and use the MCU's internal pull-ups. Add external
-4.7k pull-ups to 5V if the keyboard's signal edges are slow or unreliable.
+PB6 is a GPIO held low (max ~20mA), so it can only serve as a signal/shield
+ground. The keyboard's supply ground must go to a real GND pin (P1 pin 1).
+
+PB7/PB5 use the MCU's internal pull-ups. Add external 4.7k pull-ups to 5V if
+the keyboard's signal edges are slow or unreliable.
 
 ## Build
 

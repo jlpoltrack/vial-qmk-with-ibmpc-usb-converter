@@ -169,18 +169,9 @@ static inline void inhibit_xt(void)
     data_lo();
 }
 
-/* reset for XT Type-1 keyboard: low pulse for 500ms */
-#define IBMPC_RST_HIZ() do { \
-    gpio_set_pin_input(IBMPC_RST_PIN0); \
-    gpio_set_pin_input(IBMPC_RST_PIN1); \
-} while (0)
-
-#define IBMPC_RST_LO() do { \
-    gpio_write_pin_low(IBMPC_RST_PIN0); \
-    gpio_set_pin_output(IBMPC_RST_PIN0); \
-    gpio_write_pin_low(IBMPC_RST_PIN1); \
-    gpio_set_pin_output(IBMPC_RST_PIN1); \
-} while (0)
+/* no reset line on this board */
+#define IBMPC_RST_HIZ() do {} while (0)
+#define IBMPC_RST_LO()  do {} while (0)
 
 /* Lock via status save/restore so these are safe from both thread and ISR context. */
 /* Output latch is left as set by inhibit() in ibmpc_host_init(). */
