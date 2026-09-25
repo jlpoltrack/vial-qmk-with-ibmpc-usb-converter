@@ -556,13 +556,14 @@ void led_set(uint8_t usb_led)
     //   https://geekhack.org/index.php?topic=103648.msg2894921#msg2894921
 
     // TODO: PC_TERMINAL_IBM_RT support
-    if (usb_led &  (1<<USB_LED_SCROLL_LOCK)) {
+    led_t leds = {.raw = usb_led};
+    if (leds.scroll_lock) {
         ibmpc_led |= (1<<IBMPC_LED_SCROLL_LOCK);
     }
-    if (usb_led &  (1<<USB_LED_NUM_LOCK)) {
+    if (leds.num_lock) {
         ibmpc_led |= (1<<IBMPC_LED_NUM_LOCK);
     }
-    if (usb_led &  (1<<USB_LED_CAPS_LOCK)) {
+    if (leds.caps_lock) {
         ibmpc_led |= (1<<IBMPC_LED_CAPS_LOCK);
     }
     ibmpc_host_set_led(ibmpc_led);

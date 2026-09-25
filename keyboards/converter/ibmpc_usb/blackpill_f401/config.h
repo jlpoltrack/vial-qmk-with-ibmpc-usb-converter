@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include "config_common.h"
-
 /*
 Copyright 2012 Jun Wako <wakojun@gmail.com>
 Copyright 2016 Priyadi Iman Nurcahyo <priyadi@priyadi.net>

@@ -18,17 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define VENDOR_ID       0xFEED
-#define PRODUCT_ID      0x6536
-#define DEVICE_VER      0x0101
-#define MANUFACTURER    QMK
-#define PRODUCT         IBM keyboard protocol converter
-
-/* matrix size */
-#define MATRIX_ROWS 8
-#define MATRIX_COLS 16
-
 /* key combination for command */
 #define IS_COMMAND() ( \
-    get_mods() == (MOD_BIT(KC_LSHIFT) | MOD_BIT(KC_RSHIFT) | MOD_BIT(KC_RALT) | MOD_BIT(KC_RCTL)) \
+    get_mods() == (MOD_BIT(KC_LEFT_SHIFT) | MOD_BIT(KC_RIGHT_SHIFT) | MOD_BIT(KC_RIGHT_ALT) | MOD_BIT(KC_RIGHT_CTRL)) \
 )
