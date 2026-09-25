@@ -46,6 +46,12 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "wait.h"
 #include "ringbuf.h"
 
+/* Per-bit clock timeout while sending; fast MCUs need more than AVR's
+ * loop-overhead-padded 50us for slow terminal keyboard clocks. */
+#ifndef IBMPC_BIT_TIMEOUT_US
+#define IBMPC_BIT_TIMEOUT_US 50
+#endif
+
 #define WAIT(stat, us, err) do { \
     if (!wait_##stat(us)) { \
         ibmpc_error = err; \
@@ -119,6 +125,8 @@ RETRY:
     data_lo();
     wait_us(200);
     clock_hi();     // [5]p.54 [clock low]>100us [5]p.50
+    // released line rises slowly via keyboard pull-up; don't mistake it for the first clock
+    wait_clock_hi(100);
     WAIT(clock_lo, 10000, 1);   // [5]p.53, -10ms [5]p.50
 
     /* Data bit[2-9] */
@@ -130,19 +138,20 @@ RETRY:
         } else {
             data_lo();
         }
-        WAIT(clock_hi, 50, 2);
-        WAIT(clock_lo, 50, 3);
+        WAIT(clock_hi, IBMPC_BIT_TIMEOUT_US, 2);
+        WAIT(clock_lo, IBMPC_BIT_TIMEOUT_US, 3);
     }
 
     /* Parity bit */
     wait_us(15);
     if (parity) { data_hi(); } else { data_lo(); }
-    WAIT(clock_hi, 50, 4);
-    WAIT(clock_lo, 50, 5);
+    WAIT(clock_hi, IBMPC_BIT_TIMEOUT_US, 4);
+    WAIT(clock_lo, IBMPC_BIT_TIMEOUT_US, 5);
 
     /* Stop bit */
     wait_us(15);
     data_hi();
+    wait_data_hi(50);   // let data rise before looking for the ack
 
     /* Ack */
     WAIT(data_lo, 300, 6);
@@ -160,15 +169,15 @@ ERROR:
     // Retry for Z-150 AT start bit error
     if (ibmpc_error == 1 && retry++ < 10) {
         ibmpc_error = IBMPC_ERR_NONE;
-        dprintf("R ");
         goto RETRY;
     }
 
     ibmpc_error |= IBMPC_ERR_SEND;
     inhibit();
-    wait_ms(2);
+    wait_us(2000);  // busy-wait: still inside cli() here
     idle();
     sei();
+    dprintf("e%02X ", ibmpc_error);
     IBMPC_INT_ON();
     return -1;
 }

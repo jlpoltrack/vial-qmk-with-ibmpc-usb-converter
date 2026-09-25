@@ -108,16 +108,17 @@ void ibmpc_host_isr_clear(void);
 void ibmpc_host_set_led(uint8_t usb_led);
 void palCallback(void *arg);
 
-/* ChibiOS has no global cli()/sei(); EXTI is masked via IBMPC_INT_OFF() instead.
- * Keeping the kernel unlocked lets wait_ms() and USB keep running while sending. */
-#define cli() do {} while (0)
-#define sei() do {} while (0)
+/* Bit-banging a byte to the keyboard must not be preempted (e.g. by USB IRQs),
+ * or a clock edge is missed. Only busy-waits are used while locked. */
+#define cli() chSysLock()
+#define sei() chSysUnlock()
 
 /*--------------------------------------------------------------------
  * static functions
  *------------------------------------------------------------------*/
-/* Lines are open-drain with pull-up, so reads are valid without a mode switch. */
-#define IBMPC_LINE_MODE (PAL_STM32_MODE_OUTPUT | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUPDR_PULLUP | PAL_STM32_OSPEED_HIGHEST)
+/* Open-drain, reads are valid without a mode switch. No internal pull-up:
+ * the keyboard pulls to 5V, and FT pins above VDD must not have pulls enabled. */
+#define IBMPC_LINE_MODE (PAL_STM32_MODE_OUTPUT | PAL_STM32_OTYPE_OPENDRAIN | PAL_STM32_PUPDR_FLOATING | PAL_STM32_OSPEED_HIGHEST)
 
 static inline void clock_lo(void) { palClearLine(IBMPC_CLOCK_PIN); }
 static inline void clock_hi(void) { palSetLine(IBMPC_CLOCK_PIN); }

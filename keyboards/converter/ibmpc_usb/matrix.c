@@ -382,7 +382,7 @@ uint8_t matrix_scan(void)
             xprintf("L%u ", timer_read());
         case LOOP:
             {
-                uint16_t code = ibmpc_host_recv();
+                int16_t code = ibmpc_host_recv();
                 if (code == -1) {
                     // no code
                     break;
