@@ -2,6 +2,7 @@
 
 #include <inttypes.h>
 #include <stddef.h>
+#include "quantum/action.h"
 
 /* take qmk config macros and set up helper variables for default settings */
 
@@ -117,13 +118,15 @@ typedef struct {
     uint8_t grave_esc_override;
     uint8_t auto_shift;
     uint8_t osk_tap_toggle;
-    uint8_t tapping;
+    uint8_t tapping_v2;
     uint16_t tap_code_delay;
     uint16_t tap_hold_caps_delay;
     uint8_t tapping_toggle;
     uint8_t unused;
+    uint16_t quick_tap_term;
+    uint16_t flow_tap_term;
 } qmk_settings_t;
-_Static_assert(sizeof(qmk_settings_t) == 36, "unexpected size of the qmk_settings_t structure");
+_Static_assert(sizeof(qmk_settings_t) == 40, "unexpected size of the qmk_settings_t structure");
 
 struct qmk_settings_proto_t;
 
@@ -131,10 +134,11 @@ typedef void (*qmk_settings_notify_t)(void);
 typedef int (*qmk_settings_get_t)(const struct qmk_settings_proto_t *proto, void *setting, size_t maxsz);
 typedef int (*qmk_settings_set_t)(const struct qmk_settings_proto_t *proto, const void *setting, size_t maxsz);
 
-/* setting prototype - describes how to get/set settings; this structure is stored in flash */
+/* setting prototype - describes how to get/set settings; this structure is stored in firmware flash */
 typedef struct qmk_settings_proto_t {
     uint16_t qsid;
-    uint16_t sz;
+    uint8_t sz;
+    uint8_t bit;
     void *ptr;
     qmk_settings_get_t get;
     qmk_settings_set_t set;
@@ -147,7 +151,19 @@ void qmk_settings_query(uint16_t qsid_gt, void *buffer, size_t sz);
 int qmk_settings_get(uint16_t qsid, void *setting, size_t maxsz);
 int qmk_settings_set(uint16_t qsid, const void *setting, size_t maxsz);
 
+uint16_t qs_get_tapping_term(uint16_t keycode, keyrecord_t *record);
+
 extern qmk_settings_t QS;
+
+/* tapping */
+#define QS_tapping_permissive_hold_bit 0
+#define QS_tapping_permissive_hold (QS.tapping_v2 & (1 << QS_tapping_permissive_hold_bit))
+#define QS_tapping_hold_on_other_key_press_bit 1
+#define QS_tapping_hold_on_other_key_press (QS.tapping_v2 & (1 << QS_tapping_hold_on_other_key_press_bit))
+#define QS_tapping_retro_tapping_bit 2
+#define QS_tapping_retro_tapping (QS.tapping_v2 & (1 << QS_tapping_retro_tapping_bit))
+#define QS_tapping_chordal_hold_bit 3
+#define QS_tapping_chordal_hold (QS.tapping_v2 & (1 << QS_tapping_chordal_hold_bit))
 
 /* Grave escape */
 #define QS_grave_esc_alt_override (QS.grave_esc_override & 1)

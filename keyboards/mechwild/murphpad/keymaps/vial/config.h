@@ -14,13 +14,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-/* Saving space by including fewer RGB Animations */
-#undef RGBLIGHT_ANIMATIONS
+#if defined(__AVR_ATmega32U4__)
+    #undef LOCKING_SUPPORT_ENABLE
+    #undef LOCKING_RESYNC_ENABLE
 
-#define RGBLIGHT_EFFECT_BREATHING
-#define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-#define RGBLIGHT_EFFECT_STATIC_GRADIENT
+    #undef RGBLIGHT_EFFECT_KNIGHT
+    #undef RGBLIGHT_EFFECT_CHRISTMAS
+    #undef RGBLIGHT_EFFECT_RGB_TEST
+    #undef RGBLIGHT_EFFECT_ALTERNATING
+    #undef RGBLIGHT_EFFECT_TWINKLE
+#endif
 
 /* VIAL Specific definitions */
 #define VIAL_KEYBOARD_UID {0x3B, 0x87, 0xE1, 0xE7, 0x57, 0x30, 0x78, 0x13}
