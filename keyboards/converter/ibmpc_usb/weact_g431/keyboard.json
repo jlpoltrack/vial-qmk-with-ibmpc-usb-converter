@@ -1,4 +1,10 @@
 {
     "processor": "STM32G431",
-    "bootloader": "stm32-dfu"
+    "bootloader": "stm32-dfu",
+    "indicators": {
+        "caps_lock": "C6",
+        "num_lock": "C11",
+        "scroll_lock": "C10",
+        "on_state": 1
+    }
 }

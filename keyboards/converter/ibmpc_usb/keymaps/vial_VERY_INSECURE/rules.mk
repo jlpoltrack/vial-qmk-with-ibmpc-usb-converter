@@ -1,8 +1,11 @@
 VIA_ENABLE = yes
 VIAL_ENABLE = yes
 LTO_ENABLE = yes
-NKRO_ENABLE = no
-MOUSEKEY_ENABLE = no
-QMK_SETTINGS = no
+# Trim features only on AVR, where flash and EEPROM are tight
+ifeq ($(filter STM32%,$(MCU)),)
+    NKRO_ENABLE = no
+    MOUSEKEY_ENABLE = no
+    QMK_SETTINGS = no
+endif
 VIAL_INSECURE = yes
 OPT_DEFS += -DVIAL_VERY_INSECURE

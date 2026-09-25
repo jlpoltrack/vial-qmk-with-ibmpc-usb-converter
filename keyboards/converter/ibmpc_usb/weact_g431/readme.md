@@ -6,17 +6,27 @@
 
 Keyboard     | G431 pin (header P1)
 :----------- | :-------------------
-Clock        | PB7
+Data         | PB7
 Signal GND   | PB6 (GPIO driven low)
-Data         | PB5
+Clock        | PB5
 VCC          | 5V
 GND          | GND
+
+Lock LED   | Pin
+:--------- | :--
+Caps Lock  | PC6 (onboard blue LED)
+Num Lock   | PC11
+Scroll Lock| PC10
+
+LEDs are active high (3.3V); wire each through a resistor to GND. The M122
+itself has no LEDs.
 
 PB6 is a GPIO held low (max ~20mA), so it can only serve as a signal/shield
 ground. The keyboard's supply ground must go to a real GND pin (P1 pin 1).
 
-PB7/PB5 use the MCU's internal pull-ups. Add external 4.7k pull-ups to 5V if
-the keyboard's signal edges are slow or unreliable.
+PB5/PB7 are 5V tolerant open-drain with internal pull-ups disabled; the
+keyboard's own pull-ups to 5V set the idle level. Keyboards without pull-ups
+need external 4.7k pull-ups to 5V.
 
 ## Build
 

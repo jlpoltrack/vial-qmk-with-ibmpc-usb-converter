@@ -522,6 +522,8 @@ bool matrix_has_ghost_in_row(uint8_t row)
 void led_set(uint8_t usb_led)
 {
     uint8_t ibmpc_led = 0;
+    // drive any MCU-side indicator pins (info.json "indicators")
+    led_update_kb((led_t)usb_led);
 //    if (usb_led &  (1<<USB_LED_SCROLL_LOCK)) {
 //        DDRF |= (1<<7);
 //        PORTF |= (1<<7);

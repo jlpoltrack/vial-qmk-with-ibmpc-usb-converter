@@ -9,3 +9,11 @@ void keyboard_pre_init_kb(void) {
     gpio_set_pin_output_push_pull(IBMPC_GND_PIN);
     keyboard_pre_init_user();
 }
+
+#ifdef CONSOLE_ENABLE
+// console builds are for bring-up, so turn protocol logging on by default
+void keyboard_post_init_kb(void) {
+    debug_enable = true;
+    keyboard_post_init_user();
+}
+#endif
