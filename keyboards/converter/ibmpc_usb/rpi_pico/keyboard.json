@@ -1,0 +1,17 @@
+{
+    "processor": "RP2040",
+    "bootloader": "rp2040",
+    "board": "GENERIC_RP_RP2040",
+    "indicators": {
+        "caps_lock": "GP25",
+        "num_lock": "GP4",
+        "scroll_lock": "GP5",
+        "on_state": 1
+    },
+    "features": {
+        "haptic": true
+    },
+    "haptic": {
+        "driver": "solenoid"
+    }
+}
