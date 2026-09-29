@@ -108,6 +108,12 @@ void ibmpc_host_isr_clear(void);
 void ibmpc_host_set_led(uint8_t usb_led);
 void palCallback(void *arg);
 
+// Clock/data lines are variables so reversed wiring can be detected and swapped at runtime
+#define IBMPC_PIN_SWAP
+extern ioline_t ibmpc_clock_line;
+extern ioline_t ibmpc_data_line;
+void ibmpc_host_swap_pins(void);
+
 /* Bit-banging a byte to the keyboard must not be preempted (e.g. by USB IRQs),
  * or a clock edge is missed. Only busy-waits are used while locked. */
 #define cli() chSysLock()
@@ -120,13 +126,13 @@ void palCallback(void *arg);
  * drain" is emulated by toggling output enable. */
 #define IBMPC_PAD_MASK(line) (1U << PAL_PAD(line))
 
-static inline void clock_lo(void) { SIO->GPIO_OE_SET = IBMPC_PAD_MASK(IBMPC_CLOCK_PIN); }
-static inline void clock_hi(void) { SIO->GPIO_OE_CLR = IBMPC_PAD_MASK(IBMPC_CLOCK_PIN); }
-static inline bool clock_in(void) { return palReadLine(IBMPC_CLOCK_PIN); }
+static inline void clock_lo(void) { SIO->GPIO_OE_SET = IBMPC_PAD_MASK(ibmpc_clock_line); }
+static inline void clock_hi(void) { SIO->GPIO_OE_CLR = IBMPC_PAD_MASK(ibmpc_clock_line); }
+static inline bool clock_in(void) { return palReadLine(ibmpc_clock_line); }
 
-static inline void data_lo(void) { SIO->GPIO_OE_SET = IBMPC_PAD_MASK(IBMPC_DATA_PIN); }
-static inline void data_hi(void) { SIO->GPIO_OE_CLR = IBMPC_PAD_MASK(IBMPC_DATA_PIN); }
-static inline bool data_in(void) { return palReadLine(IBMPC_DATA_PIN); }
+static inline void data_lo(void) { SIO->GPIO_OE_SET = IBMPC_PAD_MASK(ibmpc_data_line); }
+static inline void data_hi(void) { SIO->GPIO_OE_CLR = IBMPC_PAD_MASK(ibmpc_data_line); }
+static inline bool data_in(void) { return palReadLine(ibmpc_data_line); }
 
 static inline uint16_t wait_clock_lo(uint16_t us)
 {
@@ -176,25 +182,25 @@ static inline void inhibit_xt(void)
 
 /* Setting the pad mode clears output enable, so re-apply inhibit() afterwards. */
 #define IBMPC_INT_INIT() do { \
-    palSetLineMode(IBMPC_CLOCK_PIN, PAL_MODE_INPUT_PULLUP); \
-    palSetLineMode(IBMPC_DATA_PIN, PAL_MODE_INPUT_PULLUP); \
-    palClearLine(IBMPC_CLOCK_PIN); \
-    palClearLine(IBMPC_DATA_PIN); \
+    palSetLineMode(ibmpc_clock_line, PAL_MODE_INPUT_PULLUP); \
+    palSetLineMode(ibmpc_data_line, PAL_MODE_INPUT_PULLUP); \
+    palClearLine(ibmpc_clock_line); \
+    palClearLine(ibmpc_data_line); \
     inhibit(); \
 } while (0)
 
 /* Edge latches are write-1-to-clear and not cleared by enabling the event. */
 #define IBMPC_INT_ON() do { \
     syssts_t sts_ = chSysGetStatusAndLockX(); \
-    palDisableLineEventI(IBMPC_CLOCK_PIN); \
-    IO_BANK0->INTR[PAL_PAD(IBMPC_CLOCK_PIN) / 8] = 0xCU << (4 * (PAL_PAD(IBMPC_CLOCK_PIN) % 8)); \
-    palEnableLineEventI(IBMPC_CLOCK_PIN, PAL_EVENT_MODE_FALLING_EDGE); \
-    palSetLineCallbackI(IBMPC_CLOCK_PIN, palCallback, NULL); \
+    palDisableLineEventI(ibmpc_clock_line); \
+    IO_BANK0->INTR[PAL_PAD(ibmpc_clock_line) / 8] = 0xCU << (4 * (PAL_PAD(ibmpc_clock_line) % 8)); \
+    palEnableLineEventI(ibmpc_clock_line, PAL_EVENT_MODE_FALLING_EDGE); \
+    palSetLineCallbackI(ibmpc_clock_line, palCallback, NULL); \
     chSysRestoreStatusX(sts_); \
 } while (0)
 
 #define IBMPC_INT_OFF() do { \
     syssts_t sts_ = chSysGetStatusAndLockX(); \
-    palDisableLineEventI(IBMPC_CLOCK_PIN); \
+    palDisableLineEventI(ibmpc_clock_line); \
     chSysRestoreStatusX(sts_); \
 } while (0)

@@ -83,6 +83,24 @@ void ibmpc_host_init(void)
     ringbuf_init(&rb, rbuf, RINGBUF_SIZE);
 }
 
+#ifdef IBMPC_PIN_SWAP
+ioline_t ibmpc_clock_line = IBMPC_CLOCK_PIN;
+ioline_t ibmpc_data_line  = IBMPC_DATA_PIN;
+
+/* Exchange clock/data roles (for reversed wiring) and re-enable the host. */
+void ibmpc_host_swap_pins(void)
+{
+    IBMPC_INT_OFF();
+    idle();
+    ioline_t tmp = ibmpc_clock_line;
+    ibmpc_clock_line = ibmpc_data_line;
+    ibmpc_data_line = tmp;
+    IBMPC_INT_INIT();
+    ibmpc_host_isr_clear();
+    ibmpc_host_enable();
+}
+#endif
+
 void ibmpc_host_enable(void)
 {
     IBMPC_INT_ON();

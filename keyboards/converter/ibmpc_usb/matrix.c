@@ -210,9 +210,20 @@ uint8_t matrix_scan(void)
             // reset command
             if (0xFA == ibmpc_host_send(0xFF)) {
                 state = WAIT_AA;
+#ifdef IBMPC_PIN_SWAP
+            } else if (ibmpc_host_swap_pins(), 0xFA == ibmpc_host_send(0xFF)) {
+                // no ACK as wired but ACK with clock/data exchanged: wires are reversed
+                xprintf("[SWAP] ");
+                state = WAIT_AA;
+            } else {
+                ibmpc_host_swap_pins();     // neither worked: restore and try XT
+                state = XT_RESET;
+            }
+#else
             } else {
                 state = XT_RESET;
             }
+#endif
             break;
         case XT_RESET:
             // Reset XT-initialize keyboard

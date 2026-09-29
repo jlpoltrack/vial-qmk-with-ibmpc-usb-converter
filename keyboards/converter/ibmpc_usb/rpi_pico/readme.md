@@ -18,6 +18,9 @@ Clock        | GP2 (pin 4)
 Data         | GP3 (pin 5)
 VCC          | VBUS 5V (pin 40)
 
+Clock and data are swapped automatically if wired the wrong way round
+(keyboards that accept commands only, i.e. not XT).
+
 Lock LED     | Pin
 :----------- | :--
 Caps Lock    | GP25 (onboard LED)
