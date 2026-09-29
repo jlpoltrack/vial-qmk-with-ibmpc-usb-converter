@@ -1,9 +1,9 @@
 #!/bin/bash
 # Build and flash the converter without touching BOOT0/BOOTSEL.
 # Needs a vial_VERY_INSECURE or debug build already running (or the board in its bootloader).
-# Usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2> [keymap] [extra qmk compile args, e.g. -e CONSOLE_ENABLE=yes]
+# Usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2|rpi_pico2w> [keymap] [extra qmk compile args, e.g. -e CONSOLE_ENABLE=yes]
 set -e
-VARIANT=${1:?usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2> [keymap] [qmk args]}
+VARIANT=${1:?usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2|rpi_pico2w> [keymap] [qmk args]}
 KM=${2:-vial_VERY_INSECURE}
 shift; shift || true
 KB=converter/ibmpc_usb/$VARIANT
@@ -14,7 +14,7 @@ BASE=".build/$(echo "$KB" | tr / _)_$KM"
 
 case "$VARIANT" in
     rpi_pico)  UF2_VOLUME=${UF2_VOLUME:-/Volumes/RPI-RP2} ;;
-    rpi_pico2) UF2_VOLUME=${UF2_VOLUME:-/Volumes/RP2350} ;;
+    rpi_pico2*) UF2_VOLUME=${UF2_VOLUME:-/Volumes/RP2350} ;;
 esac
 
 case "$VARIANT" in

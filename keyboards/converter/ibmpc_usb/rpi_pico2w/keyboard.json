@@ -1,0 +1,17 @@
+{
+    "processor": "RP2350",
+    "bootloader": "rp2350",
+    "board": "GENERIC_RP_RP2350",
+    "indicators": {
+        "caps_lock": "GP8",
+        "num_lock": "GP4",
+        "scroll_lock": "GP5",
+        "on_state": 1
+    },
+    "features": {
+        "haptic": true
+    },
+    "haptic": {
+        "driver": "solenoid"
+    }
+}

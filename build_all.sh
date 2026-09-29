@@ -1,7 +1,7 @@
 #!/bin/bash
 # Build every converter variant; AVR targets are skipped when avr-gcc is missing.
 AVR="atmega32u2_atmel_dfu atmega32u2_usbasploader atmega32u4_atmel_dfu atmega32u4_bootloadhid atmega32u4_caterina atmega32u4_halfkay atmega32u4_qmk_dfu atmega32u4_qmk_hid atmega32u4_usbasploader"
-ARM="weact_g431 rpi_pico rpi_pico2"
+ARM="weact_g431 rpi_pico rpi_pico2 rpi_pico2w"
 
 VARIANTS=$ARM
 if command -v avr-gcc >/dev/null; then
