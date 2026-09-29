@@ -53,6 +53,34 @@ static matrix_row_t matrix[MATRIX_ROWS];
 #define ROW(code)      ((code>>4)&0x07)
 #define COL(code)      (code&0x0F)
 
+/*
+ * Chatter filter (A-Z only): releases are held for CHATTER_FILTER_MS; a re-press of
+ * the same key inside that window cancels the release, so make/break/make yields one keystroke.
+ */
+#if CHATTER_FILTER_MS > 255
+#    error "CHATTER_FILTER_MS must be 255 or less"
+#endif
+#if CHATTER_FILTER_MS > 0
+static matrix_row_t release_pending[MATRIX_ROWS];
+static uint8_t release_time[MATRIX_ROWS * MATRIX_COLS];
+
+static void chatter_filter_task(void)
+{
+    uint8_t now = (uint8_t)timer_read();
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        if (!release_pending[row]) continue;
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            matrix_row_t bit = (matrix_row_t)1 << col;
+            if ((release_pending[row] & bit) &&
+                (uint8_t)(now - release_time[row * MATRIX_COLS + col]) >= CHATTER_FILTER_MS) {
+                release_pending[row] &= ~bit;
+                matrix[row] &= ~bit;
+            }
+        }
+    }
+}
+#endif
+
 static int16_t read_wait(uint16_t wait_ms)
 {
     uint16_t start = timer_read();
@@ -105,6 +133,9 @@ void matrix_init_user(void) {
 void matrix_clear(void)
 {
     for (uint8_t i=0; i < MATRIX_ROWS; i++) matrix[i] = 0x00;
+#if CHATTER_FILTER_MS > 0
+    for (uint8_t i=0; i < MATRIX_ROWS; i++) release_pending[i] = 0x00;
+#endif
 }
 
 void matrix_init(void)
@@ -142,6 +173,10 @@ uint8_t matrix_scan(void)
         ERROR,
     } state = INIT;
     static uint16_t init_time;
+
+#if CHATTER_FILTER_MS > 0
+    chatter_filter_task();
+#endif
 
     if (ibmpc_error) {
         xprintf("\n%u ERR:%02X ISR:%04X ", timer_read(), ibmpc_error, ibmpc_isr_debug);
@@ -464,6 +499,14 @@ inline
 static void matrix_make(uint8_t code)
 {
     uint8_t newcode=to_unimap(code);
+#if CHATTER_FILTER_MS > 0
+    if (release_pending[ROW(newcode)] & ((matrix_row_t)1<<COL(newcode))) {
+        // re-press within filter window: drop the pending release, key stays down
+        release_pending[ROW(newcode)] &= ~((matrix_row_t)1<<COL(newcode));
+        dprintf("[CHATTER %02X] ", newcode);
+        return;
+    }
+#endif
     if (!matrix_is_on(ROW(newcode), COL(newcode))) {
         matrix[ROW(newcode)] |= 1<<COL(newcode);
     }
@@ -474,6 +517,14 @@ static void matrix_break(uint8_t code)
 {
     uint8_t newcode=to_unimap(code);
     if (matrix_is_on(ROW(newcode), COL(newcode))) {
+#if CHATTER_FILTER_MS > 0
+        // only letters are filtered; deferring modifier releases would reorder events
+        if (newcode >= UNIMAP_A && newcode <= UNIMAP_Z) {
+            release_pending[ROW(newcode)] |= (matrix_row_t)1<<COL(newcode);
+            release_time[ROW(newcode) * MATRIX_COLS + COL(newcode)] = (uint8_t)timer_read();
+            return;
+        }
+#endif
         matrix[ROW(newcode)] &= ~(1<<COL(newcode));
     }
 }

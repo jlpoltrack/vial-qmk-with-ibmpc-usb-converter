@@ -22,3 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define IS_COMMAND() ( \
     get_mods() == (MOD_BIT(KC_LEFT_SHIFT) | MOD_BIT(KC_RIGHT_SHIFT) | MOD_BIT(KC_RIGHT_ALT) | MOD_BIT(KC_RIGHT_CTRL)) \
 )
+
+/* Chatter filter window in ms (0 disables, max 255); see matrix.c */
+#ifndef CHATTER_FILTER_MS
+#    define CHATTER_FILTER_MS 30
+#endif
