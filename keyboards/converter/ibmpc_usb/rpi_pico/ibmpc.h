@@ -116,8 +116,8 @@ void palCallback(void *arg);
 /*--------------------------------------------------------------------
  * static functions
  *------------------------------------------------------------------*/
-/* RP2040 has no open-drain mode: the output latch stays low and "open drain"
- * is emulated by toggling output enable. Pull-ups go to 3.3V (not 5V tolerant). */
+/* RP2040/RP2350 have no open-drain mode: the output latch stays low and "open
+ * drain" is emulated by toggling output enable. */
 #define IBMPC_PAD_MASK(line) (1U << PAL_PAD(line))
 
 static inline void clock_lo(void) { SIO->GPIO_OE_SET = IBMPC_PAD_MASK(IBMPC_CLOCK_PIN); }

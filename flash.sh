@@ -1,20 +1,24 @@
 #!/bin/bash
 # Build and flash the converter without touching BOOT0/BOOTSEL.
 # Needs a vial_VERY_INSECURE or debug build already running (or the board in its bootloader).
-# Usage: ./flash.sh <weact_g431|rpi_pico> [keymap] [extra qmk compile args, e.g. -e CONSOLE_ENABLE=yes]
+# Usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2> [keymap] [extra qmk compile args, e.g. -e CONSOLE_ENABLE=yes]
 set -e
-VARIANT=${1:?usage: ./flash.sh <weact_g431|rpi_pico> [keymap] [qmk args]}
+VARIANT=${1:?usage: ./flash.sh <weact_g431|rpi_pico|rpi_pico2> [keymap] [qmk args]}
 KM=${2:-vial_VERY_INSECURE}
 shift; shift || true
 KB=converter/ibmpc_usb/$VARIANT
 PYTHON=${PYTHON:-python3}
-UF2_VOLUME=${UF2_VOLUME:-/Volumes/RPI-RP2}
 
 qmk compile -kb "$KB" -km "$KM" "$@"
 BASE=".build/$(echo "$KB" | tr / _)_$KM"
 
 case "$VARIANT" in
-    rpi_pico) in_boot() { [ -d "$UF2_VOLUME" ]; } ;;
+    rpi_pico)  UF2_VOLUME=${UF2_VOLUME:-/Volumes/RPI-RP2} ;;
+    rpi_pico2) UF2_VOLUME=${UF2_VOLUME:-/Volumes/RP2350} ;;
+esac
+
+case "$VARIANT" in
+    rpi_pico*) in_boot() { [ -d "$UF2_VOLUME" ]; } ;;
     *)        in_boot() { dfu-util -l 2>/dev/null | grep -q "0483:df11"; } ;;
 esac
 
@@ -36,7 +40,7 @@ PY
 fi
 
 case "$VARIANT" in
-    rpi_pico)
+    rpi_pico*)
         sleep 1  # let the drive finish mounting
         cp "$BASE.uf2" "$UF2_VOLUME/" ;;
     *)
