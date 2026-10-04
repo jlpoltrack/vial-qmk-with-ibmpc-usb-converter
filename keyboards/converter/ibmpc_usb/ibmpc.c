@@ -121,9 +121,9 @@ int16_t ibmpc_host_send(uint8_t data)
 
     dprintf("w%02X ", data);
 
-    // Not receiving data
+    // Not receiving data; a frame that lost edges never completes, so give up after 3ms
     if (isr_state != 0x8000) dprintf("isr:%04X ", isr_state);
-    while (isr_state != 0x8000) ;
+    for (uint16_t us = 3000; isr_state != 0x8000 && us; us--) wait_us(1);
 
     // Not clock Lo
     if (!clock_in()) dprintf("c:%u ", wait_clock_hi(1000));
@@ -132,6 +132,10 @@ int16_t ibmpc_host_send(uint8_t data)
     if (!data_in()) dprintf("d:%u ", wait_data_hi(1000));
 
     IBMPC_INT_OFF();
+    if (isr_state != 0x8000) {
+        dprintf("isr-timeout ");
+        isr_state = 0x8000;
+    }
     cli();
 
 RETRY:
@@ -268,11 +272,7 @@ void ibmpc_interrupt_service_routine(void) {
         timer_start = t;
     } else {
         // This gives 2.0ms at least before timeout
-#if defined(__AVR__)
         if ((uint8_t)(t - timer_start) >= 3) {
-#else
-        if ((uint8_t)(timer_elapsed(timer_start)) >= 3) {
-#endif
             ibmpc_isr_debug = isr_state;
             ibmpc_error = IBMPC_ERR_TIMEOUT;
             goto ERROR;
