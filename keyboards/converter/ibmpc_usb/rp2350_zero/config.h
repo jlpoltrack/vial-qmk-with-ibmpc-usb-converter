@@ -4,11 +4,11 @@
 #pragma once
 
 /*
- * Waveshare RP2350-Zero (RP2350A). Same GPIOs as the Pico 2 target:
- * clock GP2, data GP3. See readme.md for 5V notes.
+ * Waveshare RP2350-Zero (RP2350A): clock GP10, data GP12.
+ * See readme.md for 5V notes.
  */
-#define IBMPC_CLOCK_PIN   GP2
-#define IBMPC_DATA_PIN    GP3
+#define IBMPC_CLOCK_PIN   GP10
+#define IBMPC_DATA_PIN    GP12
 
 // 50us per-bit send timeout is too tight on fast MCUs for terminal keyboards
 #define IBMPC_BIT_TIMEOUT_US 150

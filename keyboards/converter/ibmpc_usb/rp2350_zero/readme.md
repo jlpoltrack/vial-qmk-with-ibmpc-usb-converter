@@ -15,8 +15,8 @@ are still the more conservative choice.
 Keyboard     | RP2350-Zero
 :----------- | :----------
 GND          | GND
-Clock        | GP2
-Data         | GP3
+Clock        | GP10
+Data         | GP12
 VCC          | 5V
 
 Clock and data are swapped automatically if wired the wrong way round
