@@ -33,8 +33,8 @@ in `config.h`.
 
 Solenoid     | Pin
 :----------- | :--
-Solenoid     | GP6 (active high, via MOSFET with flyback diode)
-Enable       | GP7 (optional)
+Solenoid     | GP7 (active high, via MOSFET with flyback diode)
+Enable       | GP8 (optional)
 
 RP2350 erratum E9 can leave an undriven input pad floating near 2.2V, so fit
 a pull-down of 8.2k or less on the MOSFET gate(s) to keep the solenoid off

@@ -28,8 +28,8 @@
 
 /* Solenoid (haptic). RP2350 erratum E9 can hold an input pad near 2.2V, so the
  * MOSFET gate needs an external pull-down (<= 8.2k) to stay off while booting. */
-#define SOLENOID_PIN              GP6
-#define HAPTIC_ENABLE_PIN         GP7   // driver/boost enable; remove if unused
+#define SOLENOID_PIN              GP7
+#define HAPTIC_ENABLE_PIN         GP8   // driver/boost enable; remove if unused
 #define HAPTIC_OFF_IN_LOW_POWER   1
 #define SOLENOID_DEFAULT_DWELL    4
 #define SOLENOID_MIN_DWELL        4
